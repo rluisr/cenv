@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strings"
 )
 
 var (
@@ -36,7 +37,9 @@ func readVersionFile() (string, error) {
 		return "", err
 	}
 
-	return string(data), nil
+	dataStr := string(data)
+
+	return strings.TrimSpace(dataStr), nil
 }
 
 func downloadAndInstallCopilot(version string, local bool) error {
