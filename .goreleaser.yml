@@ -1,0 +1,24 @@
+project_name: cenv
+before:
+  hooks:
+    - go mod tidy
+builds:
+  - main: .
+    binary: cenv
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    goarm:
+      - "7"
+archives:
+  - name_template: '{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+release:
+  github:
+    owner: rluisr
+    name: cenv
+  prerelease: auto
