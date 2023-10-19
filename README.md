@@ -13,6 +13,13 @@ $ sudo cenv #or cenv --user
 copilot version: v1.30.1
 ```
 
+Aim
+---
+
+This tool is not intended for local use, but for file-based management of copilot versions hard-coded by CI/CD or other means.
+
+If someone deploys with a different version of copilot, you can create a flow to update the .copilot-version.
+
 Installation
 ------------
 
