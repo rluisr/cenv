@@ -66,9 +66,13 @@ func downloadAndInstallCopilot(version string, local bool) error {
 	if err != nil {
 		return err
 	}
-	defer out.Close()
 
 	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		return err
+	}
+
+	err = out.Close()
 	if err != nil {
 		return err
 	}
