@@ -43,7 +43,7 @@ func readVersionFile() (string, error) {
 }
 
 func downloadAndInstallCopilot(version string, local bool) error {
-	url := fmt.Sprintf("https://github.com/aws/copilot-cli/releases/download/v%s/copilot-%s-%s", version, runtime.GOOS, runtime.GOARCH)
+	url := fmt.Sprintf("https://github.com/aws/copilot-cli/releases/download/v%s/copilot-%s-%s-v%s", version, runtime.GOOS, runtime.GOARCH, version)
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -57,12 +57,12 @@ func downloadAndInstallCopilot(version string, local bool) error {
 		if err != nil {
 			return err
 		}
-		installPath = fmt.Sprintf("%s/copilot", currentDir)
+		installPath = fmt.Sprintf("%s/copilot-%s", currentDir, runtime.GOOS)
 	} else {
-		installPath = "/usr/local/bin/copilot"
+		installPath = fmt.Sprintf("/usr/local/bin/copilot-%s", runtime.GOOS)
 	}
 
-	out, err := os.Create(installPath)
+	out, err := os.OpenFile(installPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0755)
 	if err != nil {
 		return err
 	}
@@ -73,17 +73,7 @@ func downloadAndInstallCopilot(version string, local bool) error {
 		return err
 	}
 
-	err = os.Chmod(installPath, 0755)
-	if err != nil {
-		return err
-	}
-
-	var cmd *exec.Cmd
-	if local {
-		cmd = exec.Command("./copilot", "-v")
-	} else {
-		cmd = exec.Command("copilot", "-v")
-	}
+	cmd := exec.Command(installPath, "-v")
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -91,6 +81,7 @@ func downloadAndInstallCopilot(version string, local bool) error {
 	}
 
 	fmt.Println(string(output))
+	fmt.Printf("Copilot installed successfully to %s\n", installPath)
 
 	return nil
 }
